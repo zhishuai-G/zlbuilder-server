@@ -2,13 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { PageJsonService } from './page-json.service';
 import { CreatePageJsonDto } from './dto/create-page-json.dto';
 import { UpdatePageJsonDto } from './dto/update-page-json.dto';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @Controller('page-json')
 export class PageJsonController {
   constructor(private readonly pageJsonService: PageJsonService) { }
 
   @Post()
+  @ApiOperation({ summary: "创建页面" })
   create(@Body() createPageJsonDto: CreatePageJsonDto) {
     return this.pageJsonService.create(createPageJsonDto);
   }
@@ -19,18 +20,29 @@ export class PageJsonController {
     return this.pageJsonService.findAll(query);
   }
 
+  @Get()
+  @ApiOperation({ summary: "查询页面详情" })
+  @ApiQuery({ name: "pageId", description: "页面Id" })
+  findById(@Query() query: { pageId: string }) {
+    return this.pageJsonService.findById(query);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.pageJsonService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePageJsonDto: UpdatePageJsonDto) {
-    return this.pageJsonService.update(+id, updatePageJsonDto);
+  @Patch(':pageId')
+  @ApiOperation({ summary: "更新页面" })
+  @ApiParam({ name: "pageId", description: "页面Id" })
+  update(@Param('pageId') pageId: string, @Body() updatePageJsonDto: UpdatePageJsonDto) {
+    return this.pageJsonService.update(pageId, updatePageJsonDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pageJsonService.remove(+id);
+  @Delete(':pageId')
+  @ApiOperation({ summary: "删除页面" })
+  @ApiParam({ name: "pageId", description: "页面Id" })
+  remove(@Param('pageId') pageId: string) {
+    return this.pageJsonService.remove(pageId);
   }
 }

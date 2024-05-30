@@ -9,7 +9,10 @@ import { Like, Repository } from 'typeorm';
 export class PageJsonService {
   constructor(@InjectRepository(PageJson) private readonly pageJson: Repository<PageJson>) { }
   create(createPageJsonDto: CreatePageJsonDto) {
-    return 'This action adds a new pageJson';
+    const data = new PageJson()
+    data.pageId = createPageJsonDto.pageId
+    data.pageName = createPageJsonDto.pageName
+    return this.pageJson.save(data)
   }
 
   async findAll(query: { pageName: string }) {
@@ -25,15 +28,43 @@ export class PageJsonService {
     return data;
   }
 
+  async findById(query: { pageId: string; }) {
+    let data = await this.pageJson.findOne({
+      where: {
+        pageId: Like(`%${query.pageId}%`)
+      }
+    })
+    return data;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} pageJson`;
   }
 
-  update(id: number, updatePageJsonDto: UpdatePageJsonDto) {
-    return `This action updates a #${id} pageJson`;
+  async update(pageId: string, updatePageJsonDto: UpdatePageJsonDto) {
+    const updatePageJson = await this.pageJson.findOne({
+      where: {
+        pageId
+      }
+    })
+    if (!updatePageJson) {
+      throw new Error('Page not found')
+    }
+    let data = new PageJson()
+    data.pageName = updatePageJsonDto.pageName
+    data.pageJson = updatePageJsonDto.pageJson
+    return await this.pageJson.update(updatePageJson?.id, data)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pageJson`;
+  async remove(pageId: string) {
+    const deletePageJson = await this.pageJson.findOne({
+      where: {
+        pageId
+      }
+    })
+    if (!deletePageJson) {
+      throw new Error('Page not found')
+    }
+    return await this.pageJson.delete(deletePageJson?.id)
   }
 }
