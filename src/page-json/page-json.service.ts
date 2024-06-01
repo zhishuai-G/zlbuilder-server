@@ -37,10 +37,6 @@ export class PageJsonService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pageJson`;
-  }
-
   async update(pageId: string, updatePageJsonDto: UpdatePageJsonDto) {
     const updatePageJson = await this.pageJson.findOne({
       where: {

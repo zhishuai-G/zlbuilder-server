@@ -20,16 +20,11 @@ export class PageJsonController {
     return this.pageJsonService.findAll(query);
   }
 
-  @Get()
+  @Get('findPageById')
   @ApiOperation({ summary: "查询页面详情" })
   @ApiQuery({ name: "pageId", description: "页面Id" })
   findById(@Query() query: { pageId: string }) {
     return this.pageJsonService.findById(query);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pageJsonService.findOne(+id);
   }
 
   @Patch(':pageId')
