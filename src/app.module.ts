@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PageJsonModule } from './page-json/page-json.module';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [PageJsonModule,
@@ -18,7 +19,8 @@ import {TypeOrmModule} from '@nestjs/typeorm';
       retryDelay:500,
       retryAttempts:10,
       autoLoadEntities:true,
-    })
+    }),
+    UploadModule
   ],
   controllers: [AppController],
   providers: [AppService],
