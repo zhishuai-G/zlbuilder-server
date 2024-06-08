@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { PageJsonModule } from './page-json/page-json.module';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import { UploadModule } from './upload/upload.module';
+import { DataBaseModule } from './data-base/data-base.module';
 
 @Module({
   imports: [PageJsonModule,
@@ -20,7 +21,8 @@ import { UploadModule } from './upload/upload.module';
       retryAttempts:10,
       autoLoadEntities:true,
     }),
-    UploadModule
+    UploadModule,
+    DataBaseModule
   ],
   controllers: [AppController],
   providers: [AppService],
