@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { PageJsonService } from './page-json.service';
 import { CreatePageJsonDto } from './dto/create-page-json.dto';
 import { UpdatePageJsonDto } from './dto/update-page-json.dto';
-import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @Controller('page-json')
+@ApiTags('页面管理')
 export class PageJsonController {
   constructor(private readonly pageJsonService: PageJsonService) { }
 

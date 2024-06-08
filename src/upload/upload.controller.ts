@@ -3,8 +3,10 @@ import { UploadService } from './upload.service';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('upload')
+@ApiTags('图片上传')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 

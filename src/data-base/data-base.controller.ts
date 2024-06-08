@@ -2,10 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { DataBaseService } from './data-base.service';
 import { CreateDataBaseDto } from './dto/create-data-base.dto';
 import { UpdateDataBaseDto } from './dto/update-data-base.dto';
-import { ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateTableDto } from './dto/create-table.dto';
 
 @Controller('data-base')
+@ApiTags('实体管理')
 export class DataBaseController {
   constructor(private readonly dataBaseService: DataBaseService) { }
 
