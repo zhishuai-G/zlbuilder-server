@@ -21,7 +21,7 @@ export class DataBaseService {
     const columnsDef = [idColumnDef, otherColumnsDef].filter(Boolean).join(', ');
     console.log(columnsDef);
 
-    const sql = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnsDef});`;
+    const sql = `CREATE TABLE IF NOT EXISTS ${tableCode} (${columnsDef});`;
     try {
       // 执行SQL语句来创建表  
       await this.entityManager.query(sql);
@@ -30,50 +30,54 @@ export class DataBaseService {
       const dataBaseEntity = new DataBase();
       dataBaseEntity.table_name = tableName;
       dataBaseEntity.table_code = tableCode;
-      await this.dataBaseRepository.save(dataBaseEntity);
+      dataBaseEntity.columns = columns;
+      return await this.dataBaseRepository.save(dataBaseEntity);
     } catch (error) {
-      console.error(`Failed to create table ${createTableDto.tableName}:`, error);
+      console.error(`Failed to create table ${createTableDto.tableCode}:`, error);
     }
   }
 
-  async removeTable(tableName: string) {
+  async removeTable(tableCode: string) {
     try {
       // 使用EntityManager执行原生SQL来删除表  
-      await this.entityManager.query(`DROP TABLE IF EXISTS ${tableName};`);
+      await this.entityManager.query(`DROP TABLE IF EXISTS ${tableCode};`);
 
       // 从data_base表中删除对应表的记录  
-      await this.dataBaseRepository.delete({ table_name: tableName });
+      await this.dataBaseRepository.delete({ table_code: tableCode });
     } catch (error) {
-      console.error(`Failed to remove table ${tableName} and its record in data_base table:`, error);
+      console.error(`Failed to remove table ${tableCode} and its record in data_base table:`, error);
     }
   }
 
-  // 获取所有表的名称
-  async getTableNames() {
+  // 获取data_base表的所有数据
+  async getAllDataFromDatabase() {
     let data = await this.dataBaseRepository.find()
-    return data.map(item => item.table_name)
+    return data
   }
 
-  // 根据table_name查询数据  
-  async getTableDataByTableName(tableName: string) {
-    try {  
-      const sql = `SELECT * FROM ${tableName};`;
+  // 根据tableCode查询数据  
+  async getTableDataByTableCode(tableCode: string) {
+    try {
+      const sql = `SELECT * FROM ${tableCode};`;
       return await this.entityManager.query(sql);
     } catch (error) {
-      console.error(`Failed to query data from table ${tableName}:`, error);
+      console.error(`Failed to query data from table ${tableCode}:`, error);
       return []; // 或者抛出错误，取决于你的业务逻辑  
     }
   }
 
   // 获取所有表的数据
-  async getDataForTables(){
-    const tableNames = await this.getTableNames();
-    const allData: any[] = []; 
-    for (const tableName of tableNames) {
-      const data = await this.getTableDataByTableName(tableName);
+  async getDataForTables() {
+    const dataList = await this.getAllDataFromDatabase();
+    const allData: any[] = [];
+    for (const item of dataList) {
+      const data = await this.getTableDataByTableCode(item?.table_code);
+      const columns = await this.dataBaseRepository.findOne({ where: { table_code: item?.table_code } }).then(item => item.columns)
       allData.push({
-        tableName,
-        data
+        tableName: item?.table_name,
+        tableCode: item?.table_code,
+        data,
+        columns
       });
     }
     return allData

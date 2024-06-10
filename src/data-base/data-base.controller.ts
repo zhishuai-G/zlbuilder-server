@@ -18,11 +18,11 @@ export class DataBaseController {
   }
 
   // 删除表
-  @Delete(':tableName')
+  @Delete(':tableCode')
   @ApiOperation({ summary: "删除实体表" })
-  @ApiParam({ name: "tableName", description: "实体名称" })
-  remove(@Param('tableName') tableName: string) {
-    return this.dataBaseService.removeTable(tableName)
+  @ApiParam({ name: "tableCode", description: "实体名称" })
+  remove(@Param('tableCode') tableCode: string) {
+    return this.dataBaseService.removeTable(tableCode)
   }
 
   // 获取实体列表及表数据
