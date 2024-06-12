@@ -4,6 +4,7 @@ import { CreateDataBaseDto } from './dto/create-data-base.dto';
 import { UpdateDataBaseDto } from './dto/update-data-base.dto';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateTableDto } from './dto/create-table.dto';
+import { CreateTableDataDto } from './dto/create-table-data.dto';
 
 @Controller('data-base')
 @ApiTags('实体管理')
@@ -30,5 +31,12 @@ export class DataBaseController {
   @ApiOperation({ summary: "获取实体列表及表数据" })
   getDataForTables() {
     return this.dataBaseService.getDataForTables();
+  }
+
+  // 实体新增数据
+  @Post('addEntityData')
+  @ApiOperation({ summary: "实体新增数据" })
+  addEntityData(@Body() createTableDataDto: CreateTableDataDto) {
+    return this.dataBaseService.addEntityData(createTableDataDto);
   }
 }

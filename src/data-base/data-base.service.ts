@@ -5,6 +5,7 @@ import { CreateTableDto } from './dto/create-table.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { DataBase } from './entities/data-base.entity';
 import { EntityManager, Repository } from 'typeorm';
+import { CreateTableDataDto } from './dto/create-table-data.dto';
 
 @Injectable()
 export class DataBaseService {
@@ -81,5 +82,38 @@ export class DataBaseService {
       });
     }
     return allData
+  }
+
+  // 实体新增数据
+  async addEntityData(createTableDataDto: CreateTableDataDto) {
+    const { tableCode, columnsData } = createTableDataDto;
+    try {
+      // 确定要插入的列名  
+      let insertColumns = columnsData.map(item => item?.key) || [];
+      // 构建插入语句的列部分  
+      const columnsPart = insertColumns.map(item => `${item}`).join(', ');
+      // 构建插入语句的值部分  
+      // 确定要插入的列名  
+      let insertValues = columnsData.map(item => {  
+        if (typeof item.value === 'string') {  
+          return `'${item.value}'`; // 字符串值需要引号  
+        } else {  
+          return `${item.value}`; // 数字值不需要引号  
+        }  
+      }) || [];
+      const valuesPart = insertValues.map(item => `${item}`).join(', ');
+      console.log(columnsPart,valuesPart);
+      // 构建完整的插入语句  
+      const sql = `INSERT INTO ${tableCode} (${columnsPart}) VALUES (${valuesPart})`;
+      console.log(sql);
+      // 执行插入操作  
+      const result = await this.entityManager.query(sql);
+
+      // 返回结果（可能是受影响的行数）  
+      return result;
+    } catch (error) {
+      console.error(`Failed to add data to table ${tableCode}:`, error);
+      throw error; // 或者你可以根据需要处理错误  
+    }
   }
 }
